@@ -3,13 +3,21 @@
 
 import * as React from 'react'
 import {
-  fetchPokemon,
   PokemonInfoFallback,
   PokemonForm,
-  PokemonDataView,
-  PokemonErrorBoundary,
+  PokemonErrorBoundary
 } from '../pokemon'
-import {createResource} from '../utils'
+// import {createResource} from '../utils';
+
+// Normal Import of the App
+// import PokemonInfo from '../lazy/pokemon-info-render-as-you-fetch';
+
+import createPokemonResource from 'examples/fetch-approaches/lazy/pokemon-info-render-as-you-fetch.data';
+
+const PokemonInfo = React.lazy(() =>
+  import('../../src/examples/fetch-approaches/lazy/pokemon-info-render-as-you-fetch'),
+)
+
 
 // ❗❗❗❗
 // 🦉 On this one, make sure that you UNCHECK the "Disable cache" checkbox
@@ -20,6 +28,25 @@ import {createResource} from '../utils'
 // we need to make a place to store the resources outside of render so
 // 🐨 create "cache" object here.
 
+// const imgSrcResourceCache = {};
+// function Img({src, alt, ...props}) {
+//   console.log('src', src);
+//   let imgSrcResource = imgSrcResourceCache[src];
+//   if (!imgSrcResource) {
+//     imgSrcResource = createResource(preloadImage(src));
+//     imgSrcResourceCache[src] = imgSrcResource;
+//   }
+//   return <img src={imgSrcResource.read()} alt={alt} {...props} />;
+// }
+
+// function preloadImage(src) {
+//   return new Promise(resolve => {
+//     const img = document.createElement('img');
+//     img.src = src;
+//     img.onload = () => resolve(src);
+//   })
+// }
+
 // 🐨 create an Img component that renders a regular <img /> and accepts a src
 // prop and forwards on any remaining props.
 // 🐨 The first thing you do in this component is check whether your
@@ -29,18 +56,21 @@ import {createResource} from '../utils'
 // 💰 Here's what rendering the <img /> should look like:
 // <img src={imgSrcResource.read()} {...props} />
 
-function PokemonInfo({pokemonResource}) {
-  const pokemon = pokemonResource.read()
-  return (
-    <div>
-      <div className="pokemon-info__img-wrapper">
-        {/* 🐨 swap this img for your new Img component */}
-        <img src={pokemon.image} alt={pokemon.name} />
-      </div>
-      <PokemonDataView pokemon={pokemon} />
-    </div>
-  )
-}
+// Extra Credit 2:
+// function PokemonInfo({pokemonResource}) {
+//   const pokemon = pokemonResource.read()
+//   return (
+//     <div>
+//       <div className="pokemon-info__img-wrapper">
+//         {/* 🐨 swap this img for your new Img component */}
+//         {/* <img src={pokemon.image} alt={pokemon.name} /> */}
+//         <Img src={pokemon.image} alt={pokemon.name} />
+//       </div>
+//       <PokemonDataView pokemon={pokemon} />
+//     </div>
+//   )
+// }
+
 
 const SUSPENSE_CONFIG = {
   timeoutMs: 4000,
@@ -60,14 +90,21 @@ function getPokemonResource(name) {
   return resource
 }
 
-function createPokemonResource(pokemonName) {
-  return createResource(fetchPokemon(pokemonName))
-}
+// function createPokemonResource(pokemonName) {
+//   return {
+//     data : createResource(fetchPokemon(pokemonName)),
+//     image : createResource(preloadImage(getImageUrlForPokemon(pokemonName)))
+//   };
+// }
+
+// function createPokemonResource(pokemonName) {
+//   return createResource(fetchPokemon(pokemonName))
+// }
 
 function App() {
-  const [pokemonName, setPokemonName] = React.useState('')
-  const [startTransition, isPending] = React.useTransition(SUSPENSE_CONFIG)
-  const [pokemonResource, setPokemonResource] = React.useState(null)
+  const [pokemonName, setPokemonName] = React.useState('');
+  const [startTransition, isPending] = React.useTransition(SUSPENSE_CONFIG);
+  const [pokemonResource, setPokemonResource] = React.useState(null);
 
   React.useEffect(() => {
     if (!pokemonName) {

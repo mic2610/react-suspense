@@ -45,10 +45,17 @@ function createPokemonResource(pokemonName) {
   return createResource(fetchPokemon(pokemonName, delay))
 }
 
+const SUSPENSE_CONFIG = {
+  timeoutMs: 4000,
+  busyDelayMs: 300,
+  busyMinDurationMs: 700,
+}
+
 function App() {
   const [pokemonName, setPokemonName] = React.useState('')
   // 🐨 add a useTransition hook here
-  const [pokemonResource, setPokemonResource] = React.useState(null)
+  const [pokemonResource, setPokemonResource] = React.useState(null);
+  const [startTransition, isPending] = React.useTransition(SUSPENSE_CONFIG);
 
   React.useEffect(() => {
     if (!pokemonName) {
@@ -56,9 +63,11 @@ function App() {
       return
     }
     // 🐨 wrap this next line in a startTransition call
-    setPokemonResource(createPokemonResource(pokemonName))
+    startTransition(() => {
+      setPokemonResource(createPokemonResource(pokemonName));
+    });
     // 🐨 add startTransition to the deps list here
-  }, [pokemonName])
+  }, [pokemonName, startTransition])
 
   function handleSubmit(newPokemonName) {
     setPokemonName(newPokemonName)
@@ -76,7 +85,8 @@ function App() {
         🐨 add inline styles here to set the opacity to 0.6 if the
         useTransition above is pending
       */}
-      <div className="pokemon-info">
+      {/* <div style={{ opacity: isPending ? 0.6 : 1 }} className="pokemon-info"> */}
+      <div className={`pokemon-info ${isPending ? 'pokemon-loading' : ''}`}>
         {pokemonResource ? (
           <PokemonErrorBoundary
             onReset={handleReset}
