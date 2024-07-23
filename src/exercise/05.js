@@ -5,7 +5,7 @@ import * as React from 'react'
 import {
   PokemonInfoFallback,
   PokemonForm,
-  PokemonErrorBoundary
+  PokemonErrorBoundary,
 } from '../pokemon'
 // import {createResource} from '../utils';
 
