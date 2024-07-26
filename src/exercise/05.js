@@ -19,12 +19,6 @@ const PokemonInfo = React.lazy(() =>
 )
 
 
-// ❗❗❗❗
-// 🦉 On this one, make sure that you UNCHECK the "Disable cache" checkbox
-// in your DevTools "Network Tab". We're relying on that cache for this
-// approach to work!
-// ❗❗❗❗
-
 // we need to make a place to store the resources outside of render so
 // 🐨 create "cache" object here.
 

@@ -1,8 +1,11 @@
-version: '3'
-
 services:
   node:
-    build: .
+    container_name: react-suspense-container
+    image: react-suspense-image
+    # restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - ./src:/app/src
     ports:
